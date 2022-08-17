@@ -1,0 +1,117 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="draft_student_list">
+      <field name="name">Student List</field>
+      <field name="model">student.student</field>
+      <field name="arch" type="xml">
+        <tree decoration-info="1">
+          <field name="first_name"/>
+          <field name="last_name" />
+          <field name="father_name" />
+          <field name="age" />
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="active_student_list">
+      <field name="name">Student List</field>
+      <field name="model">student.student</field>
+      <field name="arch" type="xml">
+        <tree decoration-success="1" create="false" edit="false" delete="false">
+          <field name="first_name"/>
+          <field name="last_name" />
+          <field name="father_name" />
+          <field name="state" widget="badge"/>
+        </tree>
+      </field>
+    </record>
+
+    <record id="student_view_form" model="ir.ui.view">
+      <field name="name">student.view.form</field>
+      <field name="model">student.student</field>
+      <field name="arch" type="xml">
+        <form>
+        <header>
+          <field name="state" widget="statusbar" statusbar_visible="draft,active" attrs="{'clickable':[('state','=','draft')]}"/>
+        </header>
+          <sheet>
+            <group>
+              <group>
+                <field name="first_name" />
+                <field name="last_name" />
+                <field name="gender" />
+              </group>
+              <group>
+                <field name="father_name" />
+                <field name="age" />
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="draft_student_view_search" model="ir.ui.view">
+      <field name="name">student.view.search</field>
+      <field name="model">student.student</field>
+      <field name="arch" type="xml">
+        <search string="">
+          <field name="age"/>
+          <filter name="qualified" string="Qualified" domain="[('age', '>', 7)]" />
+        </search>
+      </field>
+    </record>
+
+    <record id="active_student_view_search" model="ir.ui.view">
+      <field name="name">student.view.search</field>
+      <field name="model">student.student</field>
+      <field name="arch" type="xml">
+        <search string="">
+          <field name="first_name"/>
+          <filter name="male" string="Male" domain="[('gender', '=', 'male')]" />
+        </search>
+      </field>
+    </record>
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="draft_student_action_window">
+      <field name="name">Students</field>
+      <field name="res_model">student.student</field>
+      <field name="view_mode">tree,form</field>
+      <field name="domain">[('state', '=', 'draft')]</field>
+      <field name="view_id" ref="draft_student_list"/> 
+       <field name="search_view_id" ref="draft_student_view_search"/>
+    </record>
+
+    <record model="ir.actions.act_window" id="active_student_action_window">
+      <field name="name">Students</field>
+      <field name="res_model">student.student</field>
+      <field name="view_mode">tree,form</field>
+      <field name="view_id" ref="active_student_list"/> 
+      <field name="domain">[('state', '=', 'active')]</field>
+       <field name="search_view_id" ref="active_student_view_search"/>
+    </record>
+
+
+    <!-- Top menu item -->
+    <menuitem name="Odoo Tricks" id="odoo_tricks_menu_root"/>
+    
+    <menuitem
+      id="draft_student_menu"
+      name="Draft"
+      action="draft_student_action_window"
+      parent="odoo_tricks_menu_root"
+      sequence="1"/>
+
+    <menuitem
+      id="active_student_menu"
+      name="Active"
+      action="active_student_action_window"
+      parent="odoo_tricks_menu_root"
+      sequence="2"/>
+
+  </data>
+</odoo>
