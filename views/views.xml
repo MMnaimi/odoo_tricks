@@ -11,6 +11,7 @@
           <field name="last_name" />
           <field name="father_name" />
           <field name="age" />
+          <field name="active" widget="boolean_toggle"/>
         </tree>
       </field>
     </record>
@@ -19,10 +20,11 @@
       <field name="name">Student List</field>
       <field name="model">student.student</field>
       <field name="arch" type="xml">
-        <tree decoration-success="1" create="false" edit="false" delete="false">
+        <tree decoration-success="1">
           <field name="first_name"/>
           <field name="last_name" />
           <field name="father_name" />
+          <field name="active" widget="boolean_toggle"/>
           <field name="state" widget="badge"/>
         </tree>
       </field>
@@ -34,9 +36,10 @@
       <field name="arch" type="xml">
         <form>
         <header>
-          <field name="state" widget="statusbar" statusbar_visible="draft,active" attrs="{'clickable':[('state','=','draft')]}"/>
+          <field name="state" widget="statusbar" statusbar_visible="draft,active" options="{'clickable': 1}" attrs="{'readonly': [('state', '=', 'draft')]}"/>
         </header>
           <sheet>
+            <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
             <group>
               <group>
                 <field name="first_name" />
@@ -46,10 +49,55 @@
               <group>
                 <field name="father_name" />
                 <field name="age" />
+                <field name="active" widget="boolean_toggle"/>
               </group>
+            </group>
+            <group>
+              <field name="teacher_id" context="{'form_view_ref': 'odoo_tricks.teacher_create_edit_view_form'}"/>
             </group>
           </sheet>
         </form>
+      </field>
+    </record>
+
+    <record id="student_view_kanban" model="ir.ui.view">
+      <field name="name">student.view.kanban</field>
+      <field name="model">student.student</field>
+      <field name="arch" type="xml">
+        <kanban records_draggable="0">
+          <field name="first_name" />
+          <field name="last_name" />
+          <field name="age" />
+          <field name="gender" />
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_global_click">
+                <div class="oe_kanban_details d-flex justify-content-between">
+                  <div class="d-flex flex-column">
+                    <span class="small">First Name</span>
+                    <span class="small">Last Name</span>
+                    <span class="small">Gender</span>
+                    <span class="small">Age</span>
+                  </div>
+                  <div class="d-flex flex-column">
+                    <strong>
+                      <t t-out="record.first_name.raw_value"/>
+                    </strong>
+                    <div class="small">
+                      <t t-out="record.last_name.raw_value"/>
+                    </div>
+                    <div t-attf-class="small {{record.gender.value == 'Male' ? 'text-success' : 'text-info'}}">
+                       <t t-out="record.gender.value"/>
+                    </div>
+                    <div class="small">
+                      <t t-out="record.age.raw_value"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </t>
+          </templates>
+        </kanban>
       </field>
     </record>
 
@@ -75,25 +123,113 @@
       </field>
     </record>
 
+    <!-- Teacher view -->
+
+    <record model="ir.ui.view" id="teacher_list">
+      <field name="name">Teacher List</field>
+      <field name="model">teacher.teacher</field>
+      <field name="arch" type="xml">
+        <tree decoration-info="1">
+          <field name="first_name"/>
+          <field name="last_name" />
+          <field name="gender" />
+          <field name="age" />
+        </tree>
+      </field>
+    </record>
+  
+    <record id="teacher_view_form" model="ir.ui.view">
+      <field name="name">teacher.view.form</field>
+      <field name="model">teacher.teacher</field>
+      <field name="priority">0</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <group>
+                <field name="first_name" />
+                <field name="last_name" />
+                <field name="gender" />
+              </group>
+              <group>
+                <field name="age" />
+                <field name="student_id" widget="many2many_tags"/>
+              </group>
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record id="teacher_create_edit_view_form" model="ir.ui.view">
+      <field name="name">teacher.view.form</field>
+      <field name="model">teacher.teacher</field>
+      <field name="arch" type="xml">
+        <form>
+          <sheet>
+            <group>
+              <field name="first_name" />
+              <field name="last_name" />
+            </group>
+          </sheet>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="teacher_action_window">
+      <field name="name">Teachers</field>
+      <field name="res_model">teacher.teacher</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
     <!-- actions opening views on models -->
 
     <record model="ir.actions.act_window" id="draft_student_action_window">
       <field name="name">Students</field>
       <field name="res_model">student.student</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">kanban,tree,form</field>
       <field name="domain">[('state', '=', 'draft')]</field>
-      <field name="view_id" ref="draft_student_list"/> 
        <field name="search_view_id" ref="draft_student_view_search"/>
+       <field name="context">{'active_test': False}</field>
     </record>
 
     <record model="ir.actions.act_window" id="active_student_action_window">
-      <field name="name">Students</field>
+      <field name="name">Active Students</field>
       <field name="res_model">student.student</field>
-      <field name="view_mode">tree,form</field>
-      <field name="view_id" ref="active_student_list"/> 
+      <field name="view_mode">kanban,tree,form</field>
       <field name="domain">[('state', '=', 'active')]</field>
-       <field name="search_view_id" ref="active_student_view_search"/>
+      <field name="context">{'create': False,'edit': False, 'delete': False, 'active_test': False}</field>
+      <field name="search_view_id" ref="active_student_view_search"/>
     </record>
+
+    <record id="student_draft_tree_action_view" model="ir.actions.act_window.view">
+      <field name="sequence" eval="6"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="draft_student_list"/>
+      <field name="act_window_id" ref="draft_student_action_window"/>
+    </record>
+
+    <record id="student_active_tree_action_view" model="ir.actions.act_window.view">
+      <field name="sequence" eval="6"/>
+      <field name="view_mode">tree</field>
+      <field name="view_id" ref="active_student_list"/>
+      <field name="act_window_id" ref="active_student_action_window"/>
+    </record>
+
+    <record id="student_active_kanban_action_view" model="ir.actions.act_window.view">
+      <field name="sequence" eval="5"/>
+      <field name="view_mode">kanban</field>
+      <field name="view_id" ref="student_view_kanban"/>
+      <field name="act_window_id" ref="active_student_action_window"/>
+    </record>
+
+    <record id="student_draft_kanban_action_view" model="ir.actions.act_window.view">
+      <field name="sequence" eval="5"/>
+      <field name="view_mode">kanban</field>
+      <field name="view_id" ref="student_view_kanban"/>
+      <field name="act_window_id" ref="draft_student_action_window"/>
+    </record>
+
 
 
     <!-- Top menu item -->
@@ -101,17 +237,24 @@
     
     <menuitem
       id="draft_student_menu"
-      name="Draft"
+      name="Students"
       action="draft_student_action_window"
       parent="odoo_tricks_menu_root"
       sequence="1"/>
 
     <menuitem
       id="active_student_menu"
-      name="Active"
+      name="Active Students"
       action="active_student_action_window"
       parent="odoo_tricks_menu_root"
       sequence="2"/>
+
+    <menuitem
+      id="teacher_menu"
+      name="Teacher"
+      action="teacher_action_window"
+      parent="odoo_tricks_menu_root"
+      sequence="10"/>
 
   </data>
 </odoo>
