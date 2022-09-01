@@ -36,6 +36,7 @@
       <field name="arch" type="xml">
         <form>
         <header>
+          <button string="Varified" name="action_varified" type="object" class="oe_highlight" attrs="{'invisible': [('state', '=', 'active')]}"/>
           <field name="state" widget="statusbar" statusbar_visible="draft,active" options="{'clickable': 1}" attrs="{'readonly': [('state', '=', 'draft')]}"/>
         </header>
           <sheet>
@@ -255,6 +256,13 @@
       action="teacher_action_window"
       parent="odoo_tricks_menu_root"
       sequence="10"/>
+
+    <record id="student_menu" model="website.menu">
+          <field name="name">Students</field> <!-- Name of the menu-->
+          <field name="url">/students</field>
+          <field name="parent_id" ref="website.main_menu"/>
+          <field name="sequence" type="int">80</field>
+    </record>
 
   </data>
 </odoo>

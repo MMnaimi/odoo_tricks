@@ -28,6 +28,19 @@ class Student(models.Model):
             if rec.age < 7 and rec.state == 'active':
                 raise ValidationError("Not qualified")
 
+    def action_varified(self):
+        for rec in self:
+            if rec.state != 'active':
+                if rec.age > 7:
+                    rec.state = 'active'
+                    return {
+                        'effect': {
+                            'fadeout': 'slow',
+                            'message': 'The student successfully varified!!!',
+                            'img_url': 'odoo_tricks/static/img/bean.jpeg',
+                            'type': 'rainbow_man'
+                        }
+                    }
 
 
 class Teacher(models.Model):

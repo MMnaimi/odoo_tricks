@@ -18,7 +18,7 @@
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base'],
+    'depends': ['base', 'website', 'purchase'],
 
     # always loaded
     'data': [
@@ -30,4 +30,10 @@
     'demo': [
         'demo/demo.xml',
     ],
+
+    'assets': {
+        'web.assets_frontend': [
+            'odoo_tricks/static/js/update_po.js',
+        ],
+    },
 }
