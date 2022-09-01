@@ -30,6 +30,17 @@
 
         <template id="purchase_order_portal_content_extend" name="template_name" inherit_id="purchase.purchase_order_portal_content">
 
+          <xpath expr="//div[@id='introduction']" position="before">
+            <div id="alert_error" class="alert alert-danger text-center d-none" role="alert" states="cancel">
+                <a class="close" data-dismiss="alert" href="#">x</a>
+                <div>
+                    <strong id="error_exp">
+                       
+                    </strong>
+                </div>
+            </div>
+          </xpath>
+
           <xpath expr="//thead/tr/th[2]" position="after">
             <th class="text-center">Unit Price</th>
             <th>Subtotal</th>
@@ -49,9 +60,11 @@
           </xpath>
 
           <xpath expr="//h3[@id='details']" position="after">
-            <button onclick="edit_purchase_unit_price()" class="btn btn-info float-right mb-1" id="edit_po">Edit</button>
-            <button onclick="discard_update()" class="btn btn-light float-right mb-1 d-none ml-1" id="discard_po">Discard</button>
-            <button onclick="update_purchase_unit_price()" class="btn btn-success float-right mb-1 d-none" id="update_po">Update</button>
+            <t t-if="order.partner_id == env.user.partner_id">
+              <button onclick="edit_purchase_unit_price()" class="btn btn-info float-right mb-1" id="edit_po">Edit</button>
+              <button onclick="location.reload();" class="btn btn-light float-right mb-1 d-none ml-1" id="discard_po">Discard</button>
+              <button onclick="update_purchase_unit_price()" class="btn btn-success float-right mb-1 d-none" id="update_po">Update</button>
+            </t>
           </xpath>
 
         </template>

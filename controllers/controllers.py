@@ -14,13 +14,16 @@ class OdooTricks(http.Controller):
 
     @http.route('/test', auth='user', method=['POST'], type="json")
     def update_po(self, **kw):
+        print(".>>>> hello and welcome")
         data = request.jsonrequest
         for value in data['data']:
             line = request.env['purchase.order.line'].search([('id', '=', value['id'])])
             line.sudo().price_unit = value['unit_price']
-        return 
+        return {
+            'done': 'Done',
+        }
     
-    @http.route('/404', auth='user', website=True)
+    @http.route('/404', auth='public', website=True)
     def not_found(self, **kw):
         return http.request.render('odoo_tricks.404', {})
 
