@@ -1,8 +1,8 @@
 function update_purchase_unit_price() {
-    data = []
     btn = document.querySelector('#update_po');
+    data = {'order_id': btn.getAttribute('data-order_id'), 'line': []}
     document.querySelectorAll('.unit_price').forEach(element => {
-        data.push({'id': element.getAttribute('data-line_id'), 'unit_price': element.value})
+        data.line.push({'id': element.getAttribute('data-line_id'), 'unit_price': element.value})
     });
     $.ajax({
         url: '/test',
@@ -53,6 +53,5 @@ function update_subtotal(event) {
     if (ele.value < 0) {
         ele.value = -(ele.value);
     }
-    subtotal.textContent = ele.value * subtotal.getAttribute('data-qty');
+    subtotal.textContent = (ele.value * subtotal.getAttribute('data-qty')).toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
-

@@ -40,7 +40,7 @@
           <field name="state" widget="statusbar" statusbar_visible="draft,active" options="{'clickable': 1}" attrs="{'readonly': [('state', '=', 'draft')]}"/>
         </header>
           <sheet>
-            <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+            <!-- <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/> -->
             <group>
               <group>
                 <field name="first_name" />
@@ -49,6 +49,7 @@
               </group>
               <group>
                 <field name="father_name" />
+                <field name="dob" />
                 <field name="age" />
                 <field name="active" widget="boolean_toggle"/>
               </group>
